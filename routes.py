@@ -35,7 +35,7 @@ class Route:
         if 'return_duration' in best_route.keys():
             self.return_duration = best_route['return_duration']
 
-    def calculate_layovers(self) -> List[str]:
+    def _calculate_layovers(self) -> List[str]:
         all_layovers = [Layover(self.flights[i], self.flights[i + 1]) for i in range(len(self.flights) - 1)]
         all_layovers = [layover.layover_time for layover in all_layovers]
         all_layovers.append(str(datetime.timedelta(seconds=0)))
@@ -48,7 +48,7 @@ class Route:
         arrival_times = [flight.arrival for flight in self.flights]
         carriers = [flight.operating_carrier for flight in self.flights]
         airlines = [flight.airline for flight in self.flights]
-        layovers = self.calculate_layovers()
+        layovers = self._calculate_layovers()
         return pd.DataFrame(
             {"fly_from": departures, "fly_to": destinations, "departure": departure_times, "arrival": arrival_times,
              "airline": carriers, "operating_airline": airlines, "layover": layovers})
@@ -57,6 +57,7 @@ class Route:
         all_lon_from, all_lat_from = [coord.lon_from for coord in self.coords], [coord.lat_from for coord in self.coords]
         all_lon_to, all_lat_to = [coord.lon_to for coord in self.coords], [coord.lat_to for coord in self.coords]
         return {"lon_from": all_lon_from, "lat_from": all_lat_from, "lon_to": all_lon_to, "lat_to": all_lat_to}
+
 
 @dataclass
 class Flight:
